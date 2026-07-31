@@ -1,0 +1,68 @@
+apply plugin: 'com.android.application'
+
+def isPlayBuild = gradle.startParameter.taskNames.any { it.toLowerCase(Locale.ROOT).contains('play') }
+if (isPlayBuild) {
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
+}
+
+android {
+    androidResources {
+        generateLocaleConfig = true
+    }
+    buildFeatures {
+        buildConfig = true
+        viewBinding = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    defaultConfig {
+        applicationId "org.nutritionfacts.dailydozen"
+        minSdkVersion 26
+        multiDexEnabled true
+        compileSdk 35
+        targetSdk 35
+        versionCode 94
+        versionName "29"
+    }
+    buildTypes {
+        debug {
+            manifestPlaceholders = [crashlyticsCollectionEnabled: "false"]
+            ext.enableCrashlytics = false
+        }
+        release {
+            manifestPlaceholders = [crashlyticsCollectionEnabled: "true"]
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions = ["store"]
+    productFlavors {
+        play {
+            dimension "store"
+        }
+        fdroid {
+            dimension "store"
+        }
+    }
+    namespace 'org.nutritionfacts.dailydozen'
+}
+
+dependencies {
+    playImplementation 'com.google.firebase:firebase-analytics:23.2.0'
+    playImplementation 'com.google.firebase:firebase-crashlytics:20.0.6'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'androidx.viewpager2:viewpager2:1.1.0'
+    implementation 'com.google.android.material:material:1.14.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
+    implementation('com.joanzapata.iconify:android-iconify-fontawesome:2.2.2') { exclude group: "com.android.support" }
+    implementation('com.github.PhilJay:MPAndroidChart:v2.2.5') { exclude group: "com.android.support" }
+    implementation('org.greenrobot:eventbus:3.3.1') { exclude group: "com.android.support" }
+    implementation 'com.google.code.gson:gson:2.14.0'
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+    implementation "io.noties.markwon:core:4.6.2"
+}
